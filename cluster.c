@@ -9,6 +9,8 @@
 #include <assert.h>
 #include <math.h> // sqrtf
 #include <limits.h> // INT_MAX
+#include <string.h>
+#include <ctype.h>
 
 /*****************************************************************
  * Ladici makra. Vypnout jejich efekt lze definici makra
@@ -222,6 +224,17 @@ void print_cluster(struct cluster_t *c) {
     putchar('\n');
 }
 
+// isNumber checks if string 'str' is a number. Returns true or false
+int isNumber(char str[]) {
+    int len = strlen(str);
+    for (int i = 0; i < len; ++i) {
+        if (!isdigit(str[i])) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 /*
  Ze souboru 'filename' nacte objekty. Pro kazdy objekt vytvori shluk a ulozi
  jej do pole shluku. Alokuje prostor pro pole vsech shluku a ukazatel na prvni
@@ -232,7 +245,54 @@ void print_cluster(struct cluster_t *c) {
 int load_clusters(char *filename, struct cluster_t **arr) {
     assert(arr != NULL);
 
-    // TODO
+    // Opens file and checks for error
+    FILE* file;
+    file = fopen(filename, "r");
+    if (file == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    // Reads from file line by line
+    // Size of line is set to 256, which due to the nature of the data should be sufficient
+    char line[256];
+    memset(line, 0, 256);
+    int lineNumber = 0;
+    while (fgets(line, sizeof(line), file)) {
+        struct obj_t o;
+        lineNumber++;
+
+        // Value from count in the first line is parsed and saved into numOfObjects
+        // Cluster array is initialized
+        if (lineNumber == 1) {
+            char * count = strrchr(line, '=');
+            init_cluster(*arr, atoi(count));
+            continue;
+        }
+
+        // Sets attributes in object o after checking if they are in the correct format
+        char * token;
+        token = strtok(line, " ");
+        if (!isNumber(token)) {
+            continue;
+        }
+        o.id = atoi(token);
+        token = strtok(NULL, " ");
+        if (!isNumber(token)) {
+            continue;
+        }
+        o.x = atoi(token);
+        token = strtok(NULL, " ");
+        if (!isNumber(token)) {
+            continue;
+        }
+        o.y = atoi(token);
+
+        // Appends object o into cluster_t array
+        append_cluster(*arr, o);
+
+    }
+    // TODO done
+    return EXIT_SUCCESS;
 }
 
 /*
@@ -249,6 +309,32 @@ void print_clusters(struct cluster_t *carr, int narr) {
 
 int main(int argc, char *argv[]) {
     struct cluster_t *clusters;
+    int targetClusters = 1;
+
+    // Verifies correctness of arguments
+    if (argc < 2) {
+        fprintf(stderr, "Too few arguments\n");
+        return EXIT_FAILURE;
+    } else if (argc > 3) {
+        fprintf(stderr, "Too many arguments\n");
+        return EXIT_FAILURE;
+    } else if (argc == 3 && !isNumber(argv[2])) {
+        fprintf(stderr, "Last argument needs to be a number\n");
+        return EXIT_FAILURE;
+    }
+
+    // If 3rd argument is set, targetClusters gets overwritten from default value 1 with the value in 3rd argument
+    if (argc == 3) {
+        targetClusters = atoi(argv[2]);
+    }
+
+    // Loads clusters and returns error
+    // If error occurs, returns error message and exits
+    int err = load_clusters(argv[1], &clusters);
+    if (err != EXIT_SUCCESS) {
+        fprintf(stderr, "Error when loading clusters from a file\n");
+        return EXIT_FAILURE;
+    }
 
     // TODO
     return EXIT_SUCCESS;
