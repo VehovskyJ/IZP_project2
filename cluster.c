@@ -83,8 +83,10 @@ void init_cluster(struct cluster_t *c, int cap) {
     assert(c != NULL);
     assert(cap >= 0);
 
-    // TODO
-
+    c->size = cap;
+    c->capacity = cap;
+    c->obj = malloc(sizeof(struct obj_t) * cap);
+    // TODO done
 }
 
 /*
@@ -265,6 +267,10 @@ int load_clusters(char *filename, struct cluster_t **arr) {
         // Cluster array is initialized
         if (lineNumber == 1) {
             char * count = strrchr(line, '=');
+            memmove(count, count + 1, strlen(count));
+            if(!isNumber(count)) {
+                return EXIT_FAILURE;
+            }
             init_cluster(*arr, atoi(count));
             continue;
         }
