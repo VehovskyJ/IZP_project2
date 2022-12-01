@@ -93,7 +93,12 @@ void init_cluster(struct cluster_t *c, int cap) {
  Odstraneni vsech objektu shluku a inicializace na prazdny shluk.
  */
 void clear_cluster(struct cluster_t *c) {
-    // TODO
+    if (c->obj != NULL) {
+        free(c->obj);
+        c->obj = NULL;
+    }
+    init_cluster(c, 0);
+    // TODO done
 }
 
 /// Chunk of cluster objects. Value recommended for reallocation.
