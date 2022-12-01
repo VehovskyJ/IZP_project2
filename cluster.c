@@ -277,7 +277,9 @@ int load_clusters(char *filename, struct cluster_t **arr) {
         // Cluster array is initialized
         if (lineNumber == 1) {
             char * count = strrchr(line, '=');
+            // Removes first character (=) and last character (\n)
             memmove(count, count + 1, strlen(count));
+            count[strlen(count) - 1] = '\0';
             if(!isNumber(count)) {
                 return EXIT_FAILURE;
             }
@@ -286,22 +288,23 @@ int load_clusters(char *filename, struct cluster_t **arr) {
         }
 
         // Sets attributes in object o after checking if they are in the correct format
-        char * token;
-        token = strtok(line, " ");
-        if (!isNumber(token)) {
+        char * tokenID;
+        char * tokenX;
+        char * tokenY;
+
+        tokenID = strtok(line, " ");
+        tokenX = strtok(NULL, " ");
+        tokenY = strtok(NULL, " ");
+
+        // Removes last character (\n) from tokenY
+        tokenY[strlen(tokenY) - 1] = '\0';
+        if (!isNumber(tokenY) || !isNumber(tokenX) || !isNumber(tokenID)) {
             continue;
         }
-        o.id = atoi(token);
-        token = strtok(NULL, " ");
-        if (!isNumber(token)) {
-            continue;
-        }
-        o.x = atoi(token);
-        token = strtok(NULL, " ");
-        if (!isNumber(token)) {
-            continue;
-        }
-        o.y = atoi(token);
+
+        o.id = atoi(tokenID);
+        o.x = atoi(tokenX);
+        o.y = atoi(tokenY);
 
         // Appends object o into cluster_t array
         append_cluster(*arr, o);
