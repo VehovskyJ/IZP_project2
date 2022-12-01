@@ -132,7 +132,12 @@ struct cluster_t *resize_cluster(struct cluster_t *c, int new_cap) {
  nevejde.
  */
 void append_cluster(struct cluster_t *c, struct obj_t obj) {
-    // TODO
+    if (c->capacity <= c->size) {
+        c = resize_cluster(c, c->capacity + CLUSTER_CHUNK);
+    }
+    c->obj[c->size] = obj;
+    c->size++;
+    // TODO done
 }
 
 /*
