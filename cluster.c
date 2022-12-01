@@ -269,9 +269,14 @@ int load_clusters(char *filename, struct cluster_t **arr) {
     char line[256];
     memset(line, 0, 256);
     int lineNumber = 0;
+    int cnt = 0;
     while (fgets(line, sizeof(line), file)) {
         struct obj_t o;
         lineNumber++;
+
+        if(lineNumber > 1 && lineNumber > cnt + 1) {
+            continue;
+        }
 
         // Value from count in the first line is parsed and saved into numOfObjects
         // Cluster array is initialized
@@ -283,7 +288,8 @@ int load_clusters(char *filename, struct cluster_t **arr) {
             if(!isNumber(count)) {
                 return EXIT_FAILURE;
             }
-            init_cluster(*arr, atoi(count));
+            cnt = atoi(count);
+            init_cluster(*arr, cnt);
             continue;
         }
 
@@ -308,7 +314,6 @@ int load_clusters(char *filename, struct cluster_t **arr) {
 
         // Appends object o into cluster_t array
         append_cluster(*arr, o);
-
     }
     // TODO done
     return EXIT_SUCCESS;
