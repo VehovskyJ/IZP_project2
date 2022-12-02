@@ -1,13 +1,13 @@
 .PHONY : clean run test
 
 cluster: cluster.c
-        gcc -std=c99 -Wall -Wextra -Werror -DNDEBUG cluster.c -o cluster -lm
+	gcc -std=c99 -Wall -Wextra -Werror -DNDEBUG cluster.c -o cluster -lm
 
 clean:
-        rm -f cluster
+	rm -f cluster
 
 run: cluster
-        ./cluster seznam.txt 5
+	./cluster soubor.txt 20
 
 test: cluster
-        python3 test.py cluster --valgrind
+	python3 test.py cluster --valgrind
