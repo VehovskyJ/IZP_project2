@@ -261,7 +261,7 @@ int load_clusters(char *filename, struct cluster_t **arr) {
     FILE* file;
     file = fopen(filename, "r");
     if (file == NULL) {
-        return EXIT_FAILURE;
+        return -1;
     }
 
     // Reads from file line by line
@@ -286,14 +286,19 @@ int load_clusters(char *filename, struct cluster_t **arr) {
             memmove(count, count + 1, strlen(count));
             count[strlen(count) - 1] = '\0';
             if(!isNumber(count)) {
-                return EXIT_FAILURE;
+                return -1;
             }
             cnt = atoi(count);
-            init_cluster(*arr, cnt);
+            *arr = malloc(sizeof(struct cluster_t) * cnt);
+            for (int i = 0; i < cnt; ++i) {
+                init_cluster(&(*arr)[i], CLUSTER_CHUNK);
+            }
+            memset(line, 0, 256);
             continue;
         }
 
         // Sets attributes in object o after checking if they are in the correct format
+        // Tried using scanf, didn't work, this does
         char * tokenID;
         char * tokenX;
         char * tokenY;
@@ -312,11 +317,11 @@ int load_clusters(char *filename, struct cluster_t **arr) {
         o.x = atoi(tokenX);
         o.y = atoi(tokenY);
 
-        // Appends object o into cluster_t array
-        append_cluster(*arr, o);
+        append_cluster(arr[lineNumber - 2], o);
+        memset(line, 0, 256);
     }
     // TODO done
-    return EXIT_SUCCESS;
+    return cnt;
 }
 
 /*
@@ -354,8 +359,8 @@ int main(int argc, char *argv[]) {
 
     // Loads clusters and returns error
     // If error occurs, returns error message and exits
-    int err = load_clusters(argv[1], &clusters);
-    if (err != EXIT_SUCCESS) {
+    int loaded = load_clusters(argv[1], &clusters);
+    if (loaded == -1) {
         fprintf(stderr, "Error when loading clusters from a file\n");
         return EXIT_FAILURE;
     }
