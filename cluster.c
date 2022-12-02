@@ -317,7 +317,7 @@ int load_clusters(char *filename, struct cluster_t **arr) {
         o.x = atoi(tokenX);
         o.y = atoi(tokenY);
 
-        append_cluster(arr[lineNumber - 2], o);
+        append_cluster(&(*arr)[lineNumber - 2], o);
         memset(line, 0, 256);
     }
     // TODO done
