@@ -414,5 +414,10 @@ int main(int argc, char *argv[]) {
 
     print_clusters(clusters, targetClusters);
 
+    for (int i = 0; i < narr; ++i) {
+        clear_cluster(&clusters[i]);
+    }
+    free(clusters);
+
     return EXIT_SUCCESS;
 }
