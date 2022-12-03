@@ -198,7 +198,16 @@ float cluster_distance(struct cluster_t *c1, struct cluster_t *c2) {
     assert(c2 != NULL);
     assert(c2->size > 0);
 
-    // TODO
+    float smallestDistance = obj_distance(&c1->obj[0], &c2->obj[0]);
+    for (int i = 0; i < c1->size; ++i) {
+        for (int j = 0; j < c2->size; ++j) {
+            float distance = obj_distance(&c1->obj[i], &c2->obj[j]);
+            if (distance < smallestDistance) {
+                smallestDistance = distance;
+            }
+        }
+    }
+    return smallestDistance;
 }
 
 /*
