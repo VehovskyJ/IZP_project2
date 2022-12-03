@@ -7,7 +7,7 @@ clean:
 	rm -f cluster
 
 run: cluster
-	./cluster soubor.txt 20
+	./cluster soubor.txt 8
 
 test: cluster
 	python3 test.py cluster --valgrind

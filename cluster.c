@@ -377,7 +377,7 @@ void print_clusters(struct cluster_t *carr, int narr) {
 int main(int argc, char *argv[]) {
     struct cluster_t *clusters;
     int targetClusters = 1;
-    int loaded;
+    int narr;
 
     // Verifies correctness of arguments
     if (argc < 2) {
@@ -398,12 +398,21 @@ int main(int argc, char *argv[]) {
 
     // Loads clusters and returns error
     // If error occurs, returns error message and exits
-    loaded = load_clusters(argv[1], &clusters);
-    if (loaded == -1) {
+    narr = load_clusters(argv[1], &clusters);
+    if (narr == -1) {
         fprintf(stderr, "Error when loading clusters from a file\n");
         return EXIT_FAILURE;
     }
 
-    // TODO
+    while(narr > targetClusters){
+        int c1;
+        int c2;
+        find_neighbours(clusters, narr, &c1, &c2);
+        merge_clusters(&clusters[c1], &clusters[c2]);
+        narr = remove_cluster(clusters, narr, c2);
+    }
+
+    print_clusters(clusters, targetClusters);
+
     return EXIT_SUCCESS;
 }
