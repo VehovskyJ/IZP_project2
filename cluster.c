@@ -86,7 +86,6 @@ void init_cluster(struct cluster_t *c, int cap) {
     c->size = 0;
     c->capacity = cap;
     c->obj = malloc(sizeof(struct obj_t) * cap);
-    // TODO done
 }
 
 /*
@@ -98,7 +97,6 @@ void clear_cluster(struct cluster_t *c) {
         c->obj = NULL;
     }
     init_cluster(c, 0);
-    // TODO done
 }
 
 /// Chunk of cluster objects. Value recommended for reallocation.
@@ -137,7 +135,6 @@ void append_cluster(struct cluster_t *c, struct obj_t obj) {
     }
     c->obj[c->size] = obj;
     c->size++;
-    // TODO done
 }
 
 /*
@@ -154,7 +151,10 @@ void merge_clusters(struct cluster_t *c1, struct cluster_t *c2) {
     assert(c1 != NULL);
     assert(c2 != NULL);
 
-    // TODO
+    for (int i = 0; i < c2->size; ++i) {
+        append_cluster(c1, c2->obj[i]);
+    }
+    sort_cluster(c1);
 }
 
 /**********************************************************************/
@@ -310,7 +310,6 @@ int load_clusters(char *filename, struct cluster_t **arr) {
         // Removes last character (\n) from tokenY
         tokenY[strlen(tokenY) - 1] = '\0';
         if (!isNumber(tokenY) || !isNumber(tokenX) || !isNumber(tokenID)) {
-            memset(line, 0, 256);
             continue;
         }
 
@@ -326,7 +325,6 @@ int load_clusters(char *filename, struct cluster_t **arr) {
         append_cluster(&(*arr)[lineNumber - 2], o);
         memset(line, 0, 256);
     }
-    // TODO done
     return cnt;
 }
 
