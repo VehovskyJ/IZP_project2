@@ -219,8 +219,8 @@ float cluster_distance(struct cluster_t *c1, struct cluster_t *c2) {
 void find_neighbours(struct cluster_t *carr, int narr, int *c1, int *c2) {
     assert(narr > 0);
 
-    c1 = (int *) &carr[0];
-    c2 = (int *) &carr[1];
+    *c1 = 0;
+    *c2 = 1;
     float smallestDistance = cluster_distance(&carr[0], &carr[1]);
     for (int i = 0; i < narr; ++i) {
         for (int j = 0; j < narr; ++j) {
@@ -232,14 +232,12 @@ void find_neighbours(struct cluster_t *carr, int narr, int *c1, int *c2) {
 
             if (distance < smallestDistance) {
                 smallestDistance = distance;
-                c1 = (int *) &carr[i];
-                c2 = (int *) &carr[j];
+                *c1 = i;
+                *c2 = j;
             }
         }
     }
     // Casting to void because otherwise throws error "parameter set but not used"
-    (void)c1;
-    (void)c2;
 }
 
 // pomocna funkce pro razeni shluku
