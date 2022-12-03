@@ -169,7 +169,14 @@ int remove_cluster(struct cluster_t *carr, int narr, int idx) {
     assert(idx < narr);
     assert(narr > 0);
 
-    // TODO
+    // If idx is bigger than number of clusters nothing happens, because it's not possible to remove cluster that does not exist
+    if (idx >= narr) {
+        return narr;
+    }
+
+    clear_cluster(&carr[idx]);
+    carr[idx] = carr[narr - 1];
+    return narr - 1;
 }
 
 /*
@@ -343,6 +350,7 @@ void print_clusters(struct cluster_t *carr, int narr) {
 int main(int argc, char *argv[]) {
     struct cluster_t *clusters;
     int targetClusters = 1;
+    int loaded;
 
     // Verifies correctness of arguments
     if (argc < 2) {
@@ -363,7 +371,7 @@ int main(int argc, char *argv[]) {
 
     // Loads clusters and returns error
     // If error occurs, returns error message and exits
-    int loaded = load_clusters(argv[1], &clusters);
+    loaded = load_clusters(argv[1], &clusters);
     if (loaded == -1) {
         fprintf(stderr, "Error when loading clusters from a file\n");
         return EXIT_FAILURE;
