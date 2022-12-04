@@ -344,16 +344,15 @@ int load_clusters(char *filename, struct cluster_t **arr) {
         // Removes last character (\n) from tokenY
         tokenY[strlen(tokenY) - 1] = '\0';
         if (!isNumber(tokenY) || !isNumber(tokenX) || !isNumber(tokenID)) {
-            continue;
+            return -1;
         }
 
         o.id = atoi(tokenID);
         o.x = atoi(tokenX);
         o.y = atoi(tokenY);
 
-        if (o.y > 1000 || o.x > 1000 || o.y < 0 || o.x < 0) {
-            memset(line, 0, 256);
-            continue;
+        if (o.y > 1000 || o.x > 1000) {
+            return -1;
         }
 
         append_cluster(&(*arr)[lineNumber - 2], o);
