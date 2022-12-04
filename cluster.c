@@ -237,7 +237,6 @@ void find_neighbours(struct cluster_t *carr, int narr, int *c1, int *c2) {
             }
         }
     }
-    // Casting to void because otherwise throws error "parameter set but not used"
 }
 
 // pomocna funkce pro razeni shluku
@@ -411,6 +410,24 @@ int main(int argc, char *argv[]) {
             fprintf(stderr, "Error when loading clusters from a file\n");
             fprintf(stderr, "One or more objects are in wrong format\n");
             return EXIT_FAILURE;
+    }
+
+    // Checks id all object ids are unique
+    for (int i = 0; i < narr; ++i) {
+        for (int j = 0; j < narr; ++j) {
+            if (i == j) {
+                continue;
+            }
+            if (clusters[i].obj[0].id == clusters[j].obj[0].id) {
+                fprintf(stderr, "Error when loading clusters from a file\n");
+                fprintf(stderr, "One or more object ids are not unique\n");
+                for (int i = 0; i < narr; ++i) {
+                    clear_cluster(&clusters[i]);
+                }
+                free(clusters);
+                return EXIT_FAILURE;
+            }
+        }
     }
 
     while(narr > targetClusters){
