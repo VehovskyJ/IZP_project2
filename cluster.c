@@ -219,12 +219,14 @@ float cluster_distance(struct cluster_t *c1, struct cluster_t *c2) {
 void find_neighbours(struct cluster_t *carr, int narr, int *c1, int *c2) {
     assert(narr > 0);
 
+    // Sets initial values
     *c1 = 0;
     *c2 = 1;
     float smallestDistance = cluster_distance(&carr[0], &carr[1]);
     for (int i = 0; i < narr; ++i) {
         for (int j = 0; j < narr; ++j) {
             if (i == j) {
+                // If i == j skips one loop because it would be comparing the object with itself
                 continue;
             }
 
@@ -298,7 +300,7 @@ int load_clusters(char *filename, struct cluster_t **arr) {
     }
 
     // Reads from file line by line
-    // Size of line is set to 256, which due to the nature of the data should be sufficient
+    // Size of line is set to 256, due to the nature of the data this limit should be sufficient
     char line[256];
     memset(line, 0, 256);
     int lineNumber = 0;
@@ -311,13 +313,14 @@ int load_clusters(char *filename, struct cluster_t **arr) {
             continue;
         }
 
-        // Value from count in the first line is parsed and saved into numOfObjects
+        // Value from count in the first line is parsed and saved into cnt
         // Cluster array is initialized
         if (lineNumber == 1) {
             char * count = strrchr(line, '=');
             // Removes first character (=) and last character (\n)
             memmove(count, count + 1, strlen(count));
             count[strlen(count) - 1] = '\0';
+            // If count is not a number or is negative returns error
             if(!isNumber(count)) {
                 return -2;
             }
@@ -342,6 +345,7 @@ int load_clusters(char *filename, struct cluster_t **arr) {
 
         // Removes last character (\n) from tokenY
         tokenY[strlen(tokenY) - 1] = '\0';
+        // Checks if the numbers are in correct format and if they are not negative
         if (!isNumber(tokenY) || !isNumber(tokenX) || !isNumber(tokenID)) {
             return -3;
         }
@@ -430,6 +434,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    // Merges the closest clusters until the number of clusters is equal to targetClusters
     while(narr > targetClusters){
         int c1;
         int c2;
@@ -440,6 +445,7 @@ int main(int argc, char *argv[]) {
 
     print_clusters(clusters, targetClusters);
 
+    // Frees allocated memory
     for (int i = 0; i < narr; ++i) {
         clear_cluster(&clusters[i]);
     }
