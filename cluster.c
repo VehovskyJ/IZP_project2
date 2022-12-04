@@ -320,7 +320,7 @@ int load_clusters(char *filename, struct cluster_t **arr) {
             memmove(count, count + 1, strlen(count));
             count[strlen(count) - 1] = '\0';
             if(!isNumber(count)) {
-                return -1;
+                return -2;
             }
             cnt = atoi(count);
             *arr = malloc(sizeof(struct cluster_t) * cnt);
@@ -344,7 +344,7 @@ int load_clusters(char *filename, struct cluster_t **arr) {
         // Removes last character (\n) from tokenY
         tokenY[strlen(tokenY) - 1] = '\0';
         if (!isNumber(tokenY) || !isNumber(tokenX) || !isNumber(tokenID)) {
-            return -1;
+            return -3;
         }
 
         o.id = atoi(tokenID);
@@ -352,7 +352,7 @@ int load_clusters(char *filename, struct cluster_t **arr) {
         o.y = atoi(tokenY);
 
         if (o.y > 1000 || o.x > 1000) {
-            return -1;
+            return -3;
         }
 
         append_cluster(&(*arr)[lineNumber - 2], o);
@@ -398,9 +398,19 @@ int main(int argc, char *argv[]) {
     // Loads clusters and returns error
     // If error occurs, returns error message and exits
     narr = load_clusters(argv[1], &clusters);
-    if (narr == -1) {
-        fprintf(stderr, "Error when loading clusters from a file\n");
-        return EXIT_FAILURE;
+    switch (narr) {
+        case -1:
+            fprintf(stderr, "Error when loading clusters from a file\n");
+            fprintf(stderr, "Cannot open the file\n");
+            return EXIT_FAILURE;
+        case -2:
+            fprintf(stderr, "Error when loading clusters from a file\n");
+            fprintf(stderr, "First line is in wrong format \"count=[object count]\"\n");
+            return EXIT_FAILURE;
+        case -3:
+            fprintf(stderr, "Error when loading clusters from a file\n");
+            fprintf(stderr, "One or more objects are in wrong format\n");
+            return EXIT_FAILURE;
     }
 
     while(narr > targetClusters){
